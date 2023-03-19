@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Deco\Documents\Programação\BDD\QUICKLIST\venv
+set VIRTUAL_ENV=C:\Users\andre\OneDrive\Documentos\Python\quicklist\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

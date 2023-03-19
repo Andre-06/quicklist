@@ -12,7 +12,11 @@ from django.shortcuts import redirect
 #se tem caracter especial
 #se o email é um email
 
-def cadastro(request):
+def signup(request):
+    if request.method == "GET":
+        return render(request, 'signup.html')
+
+"""
     if request.user.is_authenticated:
         return redirect('/posts/new_post')
 
@@ -50,6 +54,7 @@ def cadastro(request):
         except:
             messages.add_message(request, constants.ERROR, 'Ocorreu um erro inesperado, tente novamente mais tarde X_X')
             return render(request, 'cadastro.html')
+"""
 
 def logar(request):
     if request.user.is_authenticated:
