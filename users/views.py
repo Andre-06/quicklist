@@ -78,6 +78,7 @@ def logar(request):
             messages.add_message(request, constants.ERROR, 'Usuários ou senha incorretos')
             return render(request, 'login.html')
 
+
 def logout(request):
     lg(request)     
     return redirect('/auth/login')
