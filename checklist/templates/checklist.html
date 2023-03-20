@@ -23,8 +23,10 @@
     {% endif %}
     <div class="container">
       <h1>Tarefas</h1>
-      <input type="text" placeholder="Insira uma tarefa...">
-      <button class="btn">Inserir Tarefa</button>
+      <form action="{% url 'your_lists' %}" method="POST"> {% csrf_token %}
+        <input type="text" name="descricao" placeholder="Insira uma tarefa..."> 
+        <button class="btn" type="submit">Inserir Tarefa</button>
+      </form>
       {% for tarefa in lista %}
         <ul>
             <li>
