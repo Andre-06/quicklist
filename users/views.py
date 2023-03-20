@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.contrib.auth.models import User
+from .models import User
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.db.utils import IntegrityError
@@ -13,6 +13,9 @@ from django.shortcuts import redirect
 #se o email é um email
 
 def signup(request):
+    if request.user.is_authenticated:
+        return redirect('/checklist/')
+
     if request.method == 'GET':
         return render(request, 'signup.html')
     elif request.method == 'POST':
@@ -94,15 +97,15 @@ def logar(request):
         return render(request, 'login.html')
     elif request.method == "POST":
         data = {
-            "username": request.POST.get('username'),
+            "email": request.POST.get('email'),
             "password": request.POST.get('password'),
         }    
         
-        user = authenticate(username=data['name'], password=data['password'])
+        user = authenticate(email=data['email'], password=data['password'])
 
         if user:
             login(request, user)
-            return redirect('/posts/new_post')
+            return redirect('/checklist/')
         else:
             messages.add_message(request, constants.ERROR, 'Usuários ou senha incorretos')
             return render(request, 'login.html')
