@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Tarefas</title>
+    <link href="{% static '\checklist\css\your_lists.css' %}" rel="stylesheet">
+
+  </head>
+  <body>
+    <header>
+        <h4>
+            {{ user.username }}
+        </h4>
+    </header>
+    {% if messages %}
+        <br>
+        {% for message in messages %}
+            <div class="alert alert-error" role="alert">
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="container">
+      <h1>Tarefas</h1>
+      <input type="text" placeholder="Insira uma tarefa...">
+      <button class="btn">Inserir Tarefa</button>
+      {% for tarefa in lista %}
+        <ul>
+            <li>
+                <label>
+                    {% if tarefa.concluida == 1 %}
+                        <input class="checkbox" type="checkbox" checked>
+                    {% else %}
+                        <input class="checkbox" type="checkbox">
+                    {% endif %}
+                    {{tarefa.descricao}}
+                </label>
+            </li>
+        </ul>
+        {% endfor %}
+    </div>
+  </body>
+</html>

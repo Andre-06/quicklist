@@ -14,7 +14,7 @@ from django.shortcuts import redirect
 
 def signup(request):
     if request.user.is_authenticated:
-        return redirect('/checklist/')
+        return redirect('/checklist/you_lists/')
 
     if request.method == 'GET':
         return render(request, 'signup.html')
@@ -90,7 +90,7 @@ def signup(request):
 
 def logar(request):
     if request.user.is_authenticated:
-        return redirect('/checklist/')
+        return redirect('/checklist/you_lists/')
 
 
     if request.method == "GET":
@@ -105,7 +105,7 @@ def logar(request):
 
         if user:
             login(request, user)
-            return redirect('/checklist/')
+            return redirect('/checklist/you_lists/')
         else:
             messages.add_message(request, constants.ERROR, 'Usuários ou senha incorretos')
             return render(request, 'login.html')
