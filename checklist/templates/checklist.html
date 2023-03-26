@@ -27,20 +27,25 @@
         <input type="text" name="descricao" placeholder="Insira uma tarefa..."> 
         <button class="btn" type="submit">Inserir Tarefa</button>
       </form>
+      <ul>
       {% for tarefa in lista %}
-        <ul>
             <li>
-                <label>
-                    {% if tarefa.concluida == 1 %}
-                        <input class="checkbox" type="checkbox" checked>
-                    {% else %}
+                {% if tarefa.concluida == 1 %}
+                    <label class="container-checkbox">
+                        <input class="checkbox" type="checkbox" checked="checked">
+                        <span class="checkmark"></span>
+                        <span class="text" type="text">{{tarefa.descricao}}</span>
+                    </label>
+                {%   else %}
+                    <label class="container-checkbox">
                         <input class="checkbox" type="checkbox">
-                    {% endif %}
-                    {{tarefa.descricao}}
-                </label>
+                        <span class="checkmark"></span>
+                        <span class="text" type="text">{{tarefa.descricao}}</span>
+                    </label>
+                {% endif %}
             </li>
-        </ul>
         {% endfor %}
-    </div>
+        </ul>
+    </divz>
   </body>
 </html>
