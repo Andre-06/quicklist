@@ -42,6 +42,9 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=255)
+    is_verified = models.BooleanField(default=False)
+    verified_code = models.CharField(max_length=36, blank=True)
+    registration_date = models.DateTimeField(auto_now_add=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

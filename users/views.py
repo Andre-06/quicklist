@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import User
@@ -7,6 +8,10 @@ from django.db.utils import IntegrityError
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout as lg
 from django.shortcuts import redirect
+import uuid
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+
 
 #verificar se a senha tem mais de 6 digitos
 #se tem caracter especial
@@ -33,20 +38,32 @@ def signup(request):
             return render(request, 'signup.html')
         
         try:    
+            id = uuid.uuid4()
+
+            send_mail(
+                'Verificação do Email', 
+                f'Siga o link: https://127.0.0.1:8000/verify/{id}',
+                'quicklistverificatio@gmail.com',
+                [form['email']],
+                fail_silently=False)
+
             user = User.objects.create_user(
                 username=form['username'],
                 email=form['email'],
-                password=form['password']
+                password=form['password'],
+                verified_code=id
             )
 
-            messages.add_message(request, constants.SUCCESS, 'Usuário cadastrado com sucesso')
-            return render(request, 'signup.html')
+            messages.add_message(request, constants.SUCCESS, 'Usuário cadastrado com sucesso, verifique seu email')
+            return render(request, 'verify.html')
+        
         except IntegrityError:
-            messages.add_message(request, constants.ERROR, 'Nome de usuário ja cadastrado')
+            messages.add_message(request, constants.ERROR, 'Email ja cadastrado')
             return render(request, 'signup.html')
+        """
         except:
             messages.add_message(request, constants.ERROR, 'Ocorreu um erro inesperado, tente novamente mais tarde X_X')
-            return render(request, 'signup.html')  
+            return render(request, 'signup.html')  """
 
 """
     if request.user.is_authenticated:
@@ -114,4 +131,18 @@ def logar(request):
 def logout(request):
     lg(request)     
     return redirect('/auth/login')
+
+def verify_email(request, verification_code):
+    if (datetime.datetime.now() - request.user.registration_date) >= datetime.timedelta(days=1):
+        messages.add_message(request, constants.ERROR, 'O tempo de verificação ja expirou')
+        return render('sigup/')
+    try:
+        user = User.objects.get(verified_code = verification_code, email=request.user.email)
+        user.is_verified = True
+        user.save()
+        messages.add_message(request, constants.SUCCESS, "Email verificado com sucesso")
+        return redirect('login/')
+    except User.DoesNotExists:
+        messages.add_message(request, constants.ERROR, "O codigo de verificação é inválido")
+        return redirect('signup/')
         
