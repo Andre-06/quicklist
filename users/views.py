@@ -1,6 +1,4 @@
-import datetime
 from django.shortcuts import render
-from django.http import HttpResponse
 from .models import User
 from django.contrib import messages
 from django.contrib.messages import constants
@@ -9,9 +7,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout as lg
 from django.shortcuts import redirect
 import uuid
-from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
-
+from django.utils import timezone
+import smtplib
+import email.message
+from QUICKLIST.settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_HOST_PORT
 
 #verificar se a senha tem mais de 6 digitos
 #se tem caracter especial
@@ -19,7 +18,7 @@ from django.core.mail import send_mail
 
 def signup(request):
     if request.user.is_authenticated:
-        return redirect('/checklist/you_lists/')
+        return redirect('/checklist/your_lists/')
 
     if request.method == 'GET':
         return render(request, 'signup.html')
@@ -37,17 +36,33 @@ def signup(request):
             messages.add_message(request, constants.WARNING, 'Insira uma senha com mais de seis dígitos')
             return render(request, 'signup.html')
         
-        try:    
+        try:  
             id = uuid.uuid4()
+            
+            email_body = f"""
+            <p>Olá {form['username']},</p>
+            
+            <p>Seu cadastro já foi relalizado, basta somente você verificar seu email</p>
+            <p>Para isso, click no botão abaixo</p>
 
-            send_mail(
-                'Verificação do Email', 
-                f'Siga o link: https://127.0.0.1:8000/verify/{id}',
-                'quicklistverificatio@gmail.com',
-                [form['email']],
-                fail_silently=False)
+            <a href='http://127.0.0.1:8000/auth/verify/{id}'> VERIFICAR </button>
+            """  
 
-            user = User.objects.create_user(
+            msg = email.message.Message()
+            msg['Subject'] = "Verificação de Email - Quicklist"
+            msg['From'] = EMAIL_HOST_USER
+            msg['To'] = form['email']
+            password = EMAIL_HOST_PASSWORD 
+            msg.add_header('Content-Type', 'text/html')
+            msg.set_payload(email_body)
+
+            s = smtplib.SMTP(EMAIL_HOST_PORT)
+            s.starttls()
+            s.login(msg['From'], password)
+            s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+            print('Email enviado')
+            
+            User.objects.create_user(
                 username=form['username'],
                 email=form['email'],
                 password=form['password'],
@@ -107,7 +122,7 @@ def signup(request):
 
 def logar(request):
     if request.user.is_authenticated:
-        return redirect('/checklist/you_lists/')
+        return redirect('/checklist/your_lists/')
 
 
     if request.method == "GET":
@@ -121,10 +136,13 @@ def logar(request):
         user = authenticate(email=data['email'], password=data['password'])
 
         if user:
+            if not user.is_verified:
+                messages.add_message(request, constants.ERROR, 'Usuário não verificado')
+                return render(request, 'login.html')
             login(request, user)
-            return redirect('/checklist/you_lists/')
+            return redirect('/checklist/your_lists/')
         else:
-            messages.add_message(request, constants.ERROR, 'Usuários ou senha incorretos')
+            messages.add_message(request, constants.ERROR, 'Usuário ou senha incorretos')
             return render(request, 'login.html')
 
 
@@ -133,16 +151,16 @@ def logout(request):
     return redirect('/auth/login')
 
 def verify_email(request, verification_code):
-    if (datetime.datetime.now() - request.user.registration_date) >= datetime.timedelta(days=1):
-        messages.add_message(request, constants.ERROR, 'O tempo de verificação ja expirou')
-        return render('sigup/')
     try:
-        user = User.objects.get(verified_code = verification_code, email=request.user.email)
-        user.is_verified = True
-        user.save()
-        messages.add_message(request, constants.SUCCESS, "Email verificado com sucesso")
-        return redirect('login/')
-    except User.DoesNotExists:
+        user = User.objects.get(verified_code = verification_code)
+    except:
         messages.add_message(request, constants.ERROR, "O codigo de verificação é inválido")
-        return redirect('signup/')
+        return render(request, 'signup.html')
+    if (timezone.now() - user.registration_date) >= timezone.timedelta(days=1):
+        messages.add_message(request, constants.ERROR, 'O tempo de verificação ja expirou')
+        return render(request, 'signup.html')
+    user.is_verified = True
+    user.save()
+    messages.add_message(request, constants.SUCCESS, "Email verificado com sucesso")
+    return render(request, 'login.html')
         

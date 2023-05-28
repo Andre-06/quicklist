@@ -1,0 +1,17 @@
+*.pyc
+*.pyo
+*.pyd
+
+venv/
+env/
+env2/
+env3/
+
+__pycache__/
+
+*.egg-info/
+dist/
+build/
+*.log
+
+secrets.py
