@@ -6,15 +6,16 @@ from django.db.utils import IntegrityError
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout as lg
 from django.shortcuts import redirect
-import uuid
 from django.utils import timezone
 import smtplib
 import email.message
 from QUICKLIST.settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_HOST_PORT
 
-#verificar se a senha tem mais de 6 digitos
-#se tem caracter especial
-#se o email é um email
+
+# verificar se a senha tem mais de 6 digitos
+# se tem caracter especial
+# se o email é um email
+
 
 def signup(request):
     if request.user.is_authenticated:
@@ -35,10 +36,10 @@ def signup(request):
         if len(form['password']) < 6:
             messages.add_message(request, constants.WARNING, 'Insira uma senha com mais de seis dígitos')
             return render(request, 'signup.html')
-        
-        try:  
-            id = uuid.uuid4()
-            
+
+        try:
+            id = "000000"
+
             email_body = f"""
             <p>Olá {form['username']},</p>
             
@@ -46,13 +47,13 @@ def signup(request):
             <p>Para isso, click no botão abaixo</p>
 
             <a href='http://127.0.0.1:8000/auth/verify/{id}'> VERIFICAR </button>
-            """  
+            """
 
             msg = email.message.Message()
             msg['Subject'] = "Verificação de Email - Quicklist"
             msg['From'] = EMAIL_HOST_USER
             msg['To'] = form['email']
-            password = EMAIL_HOST_PASSWORD 
+            password = EMAIL_HOST_PASSWORD
             msg.add_header('Content-Type', 'text/html')
             msg.set_payload(email_body)
 
@@ -61,7 +62,7 @@ def signup(request):
             s.login(msg['From'], password)
             s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
             print('Email enviado')
-            
+
             User.objects.create_user(
                 username=form['username'],
                 email=form['email'],
@@ -71,59 +72,18 @@ def signup(request):
 
             messages.add_message(request, constants.SUCCESS, 'Usuário cadastrado com sucesso, verifique seu email')
             return render(request, 'verify.html')
-        
+
         except IntegrityError:
             messages.add_message(request, constants.ERROR, 'Email ja cadastrado')
             return render(request, 'signup.html')
-        """
         except:
             messages.add_message(request, constants.ERROR, 'Ocorreu um erro inesperado, tente novamente mais tarde X_X')
-            return render(request, 'signup.html')  """
+            return render(request, 'signup.html')
 
-"""
-    if request.user.is_authenticated:
-        return redirect('/posts/new_post')
-
-    if request.method == 'GET':
-        return render(request, 'cadastro.html')
-    elif request.method == 'POST':
-        form = {
-            "name": request.POST.get('name'),
-            "email": request.POST.get('email'),
-            "password": request.POST.get('password'),
-            "confirm_password": request.POST.get('confirm_password')
-        }
-        
-        if any([len(form[item].strip()) == 0 for item in form]):
-            messages.add_message(request, constants.WARNING, 'Preencha todos os campos corretamente')
-            return render(request, 'cadastro.html')
-        
-        if form['password'] != form['confirm_password']:
-            messages.add_message(request, constants.WARNING, 'Digite senhas iguais')
-            return render(request, 'cadastro.html')
-
-        try:    
-            user = User.objects.create_user(
-                username=form['name'],
-                email=form['email'],
-                password=form['password']
-            )
-
-            #mensagem de sucesso
-            messages.add_message(request, constants.SUCCESS, 'Usuário cadastrado com sucesso')
-            return render(request, 'cadastro.html')
-        except IntegrityError:
-            messages.add_message(request, constants.ERROR, 'Nome de usuário ja cadastrado')
-            return render(request, 'cadastro.html')
-        except:
-            messages.add_message(request, constants.ERROR, 'Ocorreu um erro inesperado, tente novamente mais tarde X_X')
-            return render(request, 'cadastro.html')
-"""
 
 def logar(request):
     if request.user.is_authenticated:
         return redirect('/checklist/your_lists/')
-
 
     if request.method == "GET":
         return render(request, 'login.html')
@@ -131,8 +91,8 @@ def logar(request):
         data = {
             "email": request.POST.get('email'),
             "password": request.POST.get('password'),
-        }    
-        
+        }
+
         user = authenticate(email=data['email'], password=data['password'])
 
         if user:
@@ -147,12 +107,13 @@ def logar(request):
 
 
 def logout(request):
-    lg(request)     
+    lg(request)
     return redirect('/auth/login')
+
 
 def verify_email(request, verification_code):
     try:
-        user = User.objects.get(verified_code = verification_code)
+        user = User.objects.get(verified_code=verification_code)
     except:
         messages.add_message(request, constants.ERROR, "O codigo de verificação é inválido")
         return render(request, 'signup.html')
@@ -163,4 +124,3 @@ def verify_email(request, verification_code):
     user.save()
     messages.add_message(request, constants.SUCCESS, "Email verificado com sucesso")
     return render(request, 'login.html')
-        

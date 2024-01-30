@@ -5,9 +5,11 @@
     <meta charset="UTF-8">
     <title>Tarefas</title>
     <link href="{% static '\checklist\css\your_lists.css' %}" rel="stylesheet">
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static '\checklist\js\checklist.js' %}"></script>
   </head>
   <body>
+   {% csrf_token %}
     <header>
         <h4>
             {{ user.username }}
@@ -30,22 +32,12 @@
       <ul>
       {% for tarefa in lista %}
             <li>
-                {% if tarefa.concluida == 1 %}
-                    <label class="container-checkbox">
-                        <input class="checkbox" type="checkbox" checked="checked">
-                        <span class="checkmark"></span>
-                        <span class="text" type="text">{{tarefa.descricao}}</span>
-                    </label>
-                {%   else %}
-                    <label class="container-checkbox">
-                        <input class="checkbox" type="checkbox">
-                        <span class="checkmark"></span>
-                        <span class="text" type="text">{{tarefa.descricao}}</span>
-                    </label>
-                {% endif %}
+                <input class="checkbox" onclick="clicked({{tarefa.id}}, {% if tarefa.concluida == 1 %}true{% else %}false{% endif %})" type="checkbox" id="checkbox-{{ tarefa.id }}" {% if tarefa.concluida == 1 %}checked{% endif %}>
+                <span class="text" type="text">{{tarefa.descricao}}</span>
+                <button class="button" id="delete-button">X</button>
             </li>
         {% endfor %}
         </ul>
-    </divz>
+    </div>
   </body>
 </html>
