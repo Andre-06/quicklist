@@ -18,7 +18,7 @@ function clicked(tarefa_id, concluida){
     });
 }
 function deleteTarefa(tarefa_id){
-    var csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
     $.ajax({
         url: '/checklist/atualizar-tarefa/' + tarefa_id + '/',
         method: 'POST',

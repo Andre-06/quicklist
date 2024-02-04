@@ -38,10 +38,12 @@ class UserManager(BaseUserManager):
 
     def has_module_perms(self, user_obj, app_label):
         return user_obj.is_superuser
-    
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=150, blank=True)
     is_verified = models.BooleanField(default=False)
     verified_code = models.CharField(max_length=36, blank=True)
     registration_date = models.DateTimeField(auto_now_add=True, blank=True)
@@ -52,12 +54,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-
-    def get_full_name(self):
-        return self.username
-
-    def get_short_name(self):
-        return self.username
 
     def has_perm(self, perm, obj=None):
         return True

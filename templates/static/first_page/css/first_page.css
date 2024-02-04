@@ -1,0 +1,128 @@
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: Verdana, sans-serif;
+    color: #293845;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+    background-image: url("../img/background.png");
+    background-size: cover;
+    background-position: center center;
+}
+
+.main-header {
+    height: 6.5rem;
+    background-color: #404044;
+    z-index: 2;
+    position: relative;
+}
+
+.content {
+    margin: 0 auto;
+    max-width: 95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+.main-header .content h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+.main-header .content ul{
+    display: flex;
+    gap: 2.5rem;
+}
+
+.main-header .content ul li {
+    list-style: none;
+    font-size: 1.5rem;
+    color: white;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+}
+
+.main-header .content ul li:after {
+    content: '';
+    position: absolute;
+    transition: all 300ms ease-in-out;
+    bottom: -0.3rem;
+}
+
+.main-header .content ul li:hover:after {
+    right: 0;
+    left: 0;
+    background-color: #a02eff;
+    height: 0.2rem;
+}
+
+.disable-li::after {
+    display: none;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    height: 100%;
+}
+
+.title {
+    font-size: 4rem;
+    font-weight: normal;
+    text-align: center;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    font-weight: lighter;
+    font-style: italic;
+    text-align: center;
+}
+
+.image-1 {
+    display: flex;
+    align-items: end;
+    height: 100%;
+    justify-content: end;
+}
+
+img {
+    height: auto;
+    width: 30rem;
+}
+
+.image-2 {
+    height: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+}
+
+.container{
+    height: calc(100vh - 6.5rem);
+}
+
+@media (max-width: 850px) {
+    img {
+        display: none ;
+    }
+
+    .main-content {
+        grid-template-columns: 1fr;
+        align-items: center;
+    }
+
+}
+
+a {
+    color: inherit;
+    text-decoration: inherit;
+}

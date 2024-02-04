@@ -26,6 +26,7 @@ def signup(request):
     elif request.method == 'POST':
         form = {
             'username': request.POST.get('username'),
+            'name': request.POST.get('name'),
             'email': request.POST.get('email'),
             'password': request.POST.get('password')
         }
@@ -65,6 +66,7 @@ def signup(request):
 
             User.objects.create_user(
                 username=form['username'],
+                name=form['name'],
                 email=form['email'],
                 password=form['password'],
                 verified_code=id
@@ -81,7 +83,7 @@ def signup(request):
             return render(request, 'signup.html')
 
 
-def logar(request):
+def login_request(request):
     if request.user.is_authenticated:
         return redirect('/checklist/your_lists/')
 
@@ -94,11 +96,11 @@ def logar(request):
         }
 
         user = authenticate(email=data['email'], password=data['password'])
-
         if user:
             if not user.is_verified:
                 messages.add_message(request, constants.ERROR, 'Usuário não verificado')
                 return render(request, 'login.html')
+            print(user.email)
             login(request, user)
             return redirect('/checklist/your_lists/')
         else:

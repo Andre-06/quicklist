@@ -1,19 +1,23 @@
 {% load static %}
-<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Tarefas</title>
-    <link href="{% static '\checklist\css\your_lists.css' %}" rel="stylesheet">
+    <title>Quicklist</title>
+    <link href="{% static '\first_page\css\first_page.css' %}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static '\checklist\js\checklist.js' %}"></script>
+    <link href="{% static '\checklist\css\your_lists.css' %}" rel="stylesheet">
   </head>
   <body>
    {% csrf_token %}
-    <header>
-        <h4>
-            {{ user.username }}
-        </h4>
+    <header class="main-header">
+        <div class="content">
+            <h1><a href="/">QUICKLIST</a></h1>
+            <ul>
+                <li class="disable-li">Olá, {{ user.name }}</li>
+                <li class="logout"><a href="/auth/logout">Sair</a></li>
+            </ul>
+        </div>
     </header>
     {% if messages %}
         <br>
@@ -23,21 +27,30 @@
             </div>
         {% endfor %}
     {% endif %}
+
     <div class="container">
-      <h1>Tarefas</h1>
-      <form action="{% url 'your_lists' %}" method="POST"> {% csrf_token %}
-        <input type="text" name="descricao" placeholder="Insira uma tarefa..."> 
-        <button class="btn" type="submit">Inserir Tarefa</button>
-      </form>
-      <ul>
-      {% for tarefa in lista %}
-            <li>
-                <input class="checkbox" onclick="clicked({{tarefa.id}}, {% if tarefa.concluida == 1 %}true{% else %}false{% endif %})" type="checkbox" id="checkbox-{{ tarefa.id }}" {% if tarefa.concluida == 1 %}checked{% endif %}>
-                <span class="text" type="text">{{tarefa.descricao}}</span>
-                <button class="button" id="delete-button">X</button>
-            </li>
-        {% endfor %}
-        </ul>
+        <div class="content main-content">
+          <h1>Tarefas</h1>
+          <form action="{% url 'your_lists' %}" method="POST"> {% csrf_token %}
+            <input type="text" name="descricao" placeholder="Insira uma tarefa...">
+            <button class="btn" type="submit">Inserir Tarefa</button>
+          </form>
+          <ul>
+          {% for tarefa in lista %}
+                <li>
+                    <input class="checkbox" onclick="clicked({{tarefa.id}}, {% if tarefa.concluida == 1 %}true{% else %}false{% endif %})" type="checkbox" id="checkbox-{{ tarefa.id }}" {% if tarefa.concluida == 1 %}checked{% endif %}>
+                    <span class="text" type="text">{{tarefa.descricao}}</span>
+                    <button class="button" id="delete-button">X</button>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
     </div>
+
+    <aside class="menu-container">
+        <ul>
+            <li>Minhas Tarefas</li>
+        </ul>
+    </aside>
   </body>
 </html>

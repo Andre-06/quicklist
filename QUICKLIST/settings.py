@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'users',
     'checklist',
+    'first_page'
 ]
 
 MIDDLEWARE = [
